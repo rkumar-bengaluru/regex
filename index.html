@@ -55,6 +55,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.60.0/codemirror.min.js"
         integrity="sha512-hc0zo04EIwTzKLvp2eycDTeIUuvoGYYmFIjYx7DmfgQeZPC5N27sPG2wEQPq8d8fCTwuguLrI1ffatqxyTbHJw=="
         crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./css/main.css">
 </head>
 
 <body>
@@ -98,20 +99,15 @@
             <div class="col border">
                 <div class="row m-1">
                     <span class="input-group-text">Your Regular Expression</span>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">/</span>
-                        </div>
-                        <textarea id='expressionInput'></textarea>
-                        <div class="input-group-append">
-                            <span class="input-group-text">/</span>
-                        </div>
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">g</span>
-                        </div>
+                    <div class="input-group">
+                       
+                        <article id='expressionInput'>
+                            </svg></article>
+                        
                     </div>
                 </div>
-                <div class="row m-1">
+
+                <div class="row m-5">
                     <span class="input-group-text">Text to Test</span>
                     <textarea class="form-control" id="editor" rows="10">
                         RegExr was created by gskinner.com, and is proudly hosted by Media Temple.
@@ -160,9 +156,9 @@
     <script async src="./build/main.bundle.js"></script>
     <script type="module">
         import { hello } from './src/html.js'
-      
+
         hello('good morning...');
-      </script>
+    </script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }

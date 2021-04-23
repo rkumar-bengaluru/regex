@@ -1,17 +1,34 @@
 var path = require('path');
- var webpack = require('webpack');
+var webpack = require('webpack');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
- module.exports = {
-     entry: './src/app.js',
-     output: {
-         path: path.resolve(__dirname, 'build'),
-         filename: 'main.bundle.js'
-     },
-     module: {
-        
-     },
-     stats: {
-         colors: true
-     },
-     devtool: 'source-map'
- };
+module.exports = {
+    entry: ['./src/app.js', './src/sass/regexr.scss'],
+    output: {
+        path: path.resolve(__dirname, 'build'),
+        filename: 'main.bundle.js'
+    },
+    module: {
+        rules: [
+            {
+                test: /\.s[ac]ss$/i,
+                exclude: /node_modules/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    "css-loader",
+                    "sass-loader"
+                ],
+            },
+        ],
+    },
+    stats: {
+        colors: true
+    },
+    devtool: 'source-map',
+    plugins: [
+        new MiniCssExtractPlugin({
+            filename: "[name].css",
+            chunkFilename: "[id].css"
+        })
+    ]
+};

@@ -25,6 +25,7 @@ $.createCM = function(target, opts = {}, width = "100%", height = "100%") {
         specialChars: /[ \u0000-\u001f\u007f-\u009f\u00ad\u061c\u200b-\u200f\u2028\u2029\ufeff]/,
         specialCharPlaceholder: (ch) => $.create("span", ch === " " ? "cm-space" : "cm-special", " ") // needs to be a space so wrapping works
     }, opts);
+	//var cm = new CodeMirror.fromTextArea(target, o);
     let cm = CodeMirror(target, o);
     return cm;
 }
@@ -37,4 +38,15 @@ $.decomposeRegEx = function(str, delim="/") {
 	} else {
 		return {source: str, flags: "g"};
 	}
+};
+
+$.query = function(query, element = document.body) {
+	return (query[0] === ">") ? $._childQuery(query, element, $.query) : element.querySelector(query);
+};
+
+$._childQuery = function(query, el, f) {
+	if (!el.id) { el.id = "___tmp_id"; }
+	let result = f("#"+el.id+" "+query, el.parentNode);
+	if (el.id === "___tmp_id") { el.id = ""; }
+	return result;
 };
