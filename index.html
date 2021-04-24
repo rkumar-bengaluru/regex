@@ -100,10 +100,10 @@
                 <div class="row m-1">
                     <span class="input-group-text">Your Regular Expression</span>
                     <div class="input-group">
-                       
+
                         <article id='expressionInput'>
                             </svg></article>
-                        
+
                     </div>
                 </div>
 
@@ -167,9 +167,18 @@
         gtag('config', 'UA-191905399-1');
     </script>
     <script>
-        var myRe = new RegExp(/([A-Z])\w+/g);
-        var myArray = myRe.exec('RegExr was created by gskinner.com, and is proudly hosted by Media Temple.');
-        console.log(myArray);
+        var myRe = new RegExp(/\b[A-Z].*?\b/g);
+        var data = 'RegExr was created by gskinner.com, and is proudly hosted by Media Temple.Edit the Expression & Text to see matches. Roll over matches or the expression for details. PCRE & JavaScript flavors of RegEx are supported. Validate your expression with Tests mode.The side bar includes a Cheatsheet, full Reference, and Help. You can also Save & Share with the Community, and view patterns you create or favorite in My Patterns.Explore results with the Tools below. Replace & List output custom results. Details lists capture groups. Explain describes your expression in plain English.';
+        let array;
+        let counter = 0;
+        while ((array = myRe.exec(data)) !== null) {
+            console.log(`Found ${array[0]}. Next starts at ${myRe.lastIndex}.`);
+            counter++;
+        }
+        console.log('result size->' + counter);
+        
+        
+
 
     </script>
 
