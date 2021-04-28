@@ -50,3 +50,16 @@ $._childQuery = function(query, el, f) {
 	if (el.id === "___tmp_id") { el.id = ""; }
 	return result;
 };
+
+let deferIds = {};
+$._defer = function (f, id, t=1) {
+	clearTimeout(deferIds[id]);
+	if (f === null) {
+		delete(deferIds[id]);
+		return;
+	}
+	deferIds[id] = setTimeout(()=>{
+		delete deferIds[id];
+		f();
+	}, t)
+};

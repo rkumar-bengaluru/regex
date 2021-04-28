@@ -76,39 +76,31 @@
 
         <div class="row border h-100 mh-100 m-1">
             <div class="mw-25">
-                <form>
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Email address</label>
-                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            placeholder="Enter email">
-                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
-                            else.</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleInputPassword1">Password</label>
-                        <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Password">
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
+               <!-- Add Resources Here-->
             </div>
 
             <div class="col border">
                 <div class="row m-1">
-                    <span class="input-group-text">Your Regular Expression</span>
+                    <div class="alert alert-primary input-group-text m-1" role="alert">
+                        Your Regular Expression
+                    </div>
+                    <div id="expressiontotest" class="alert alert-primary input-group-text m-1" role="alert">
+                        !
+                    </div>
+
                     <div class="input-group">
-
-                        <article id='expressionInput'>
-                            </svg></article>
-
+                        <article id='expressionInput'></article>
                     </div>
                 </div>
 
                 <div class="row m-5">
-                    <span class="input-group-text">Text to Test</span>
+                    <div class="alert alert-primary input-group-text m-1" role="alert">
+                        Text to Test
+                    </div>
+                    <div id="result" class="alert alert-primary input-group-text m-1" role="alert">
+                        !
+                    </div>
+
                     <textarea class="form-control" id="editor" rows="10">
                         RegExr was created by gskinner.com, and is proudly hosted by Media Temple.
                         
@@ -122,25 +114,7 @@
                 </div>
             </div>
             <div class="mw-25">
-                <form>
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Email address</label>
-                        <input type="email" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp"
-                            placeholder="Enter email">
-                        <small id="emailHelp" class="form-text text-muted  overflow-auto">We'll never share your email
-                            with anyone
-                            else.</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleInputPassword1">Password</label>
-                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck2">
-                        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
+                <!-- Add Ads Here-->
             </div>
         </div>
     </div>
@@ -167,7 +141,12 @@
         gtag('config', 'UA-191905399-1');
     </script>
     <script>
-        var myRe = new RegExp(/\b[A-Z].*?\b/g);
+        var tmp = '/\\b[A-Z].*?\\b/g';
+
+        let myRe = new RegExp('\\b[A-Z].*?\\b', 'g');
+
+
+        console.log(myRe);
         var data = 'RegExr was created by gskinner.com, and is proudly hosted by Media Temple.Edit the Expression & Text to see matches. Roll over matches or the expression for details. PCRE & JavaScript flavors of RegEx are supported. Validate your expression with Tests mode.The side bar includes a Cheatsheet, full Reference, and Help. You can also Save & Share with the Community, and view patterns you create or favorite in My Patterns.Explore results with the Tools below. Replace & List output custom results. Details lists capture groups. Explain describes your expression in plain English.';
         let array;
         let counter = 0;
@@ -176,8 +155,8 @@
             counter++;
         }
         console.log('result size->' + counter);
-        
-        
+
+
 
 
     </script>
