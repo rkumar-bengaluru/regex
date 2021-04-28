@@ -1,62 +1,64 @@
 import $ from "./utils/DOMUtils";
+
 export default class Expression {
     constructor(el) {
-
         this.delim = "/";
-
-        this._initUI();
+        this.initUI();
     }
 
+    decomposeRegEx(str, delim="/") {
+        let re = new RegExp("^"+delim+"(.*)"+delim+"([igmsuUxy]*)$");
+        let match = re.exec(str);
+        if (match) {
+            return {source: match[1], flags: match[2]};
+        } else {
+            return {source: str, flags: "g"};
+        }
+    };
+
     set value(expression) {
-        let regex = $.decomposeRegEx(expression || Expression.DEFAULT_EXPRESSION, this.delim);
+        console.log('value(expression)');
+        let regex = this.decomposeRegEx(expression || Expression.DEFAULT_EXPRESSION, this.delim);
         this.pattern = regex.source;
         this.flags = regex.flags;
-        console.log(regex);
-
     }
 
     get value() {
+        console.log('value()');
         return this.editor.getValue();
     }
 
     set pattern(pattern) {
+        console.log('set pattern()');
         let index = this.editor.getValue().lastIndexOf(this.delim);
         this.editor.replaceRange(pattern, { line: 0, ch: 1 }, { line: 0, ch: index });
         console.log('setting pattern');
-        this._deferUpdate();
+        this.deferUpdate();
     }
 
-    _initUI() {
+    initUI() {
         //this.editorEl = $.query("> .editor", el);
         this.editorEl = document.getElementById('expressionInput');
-        console.log(this.editorEl);
         let editor = this.editor = $.createCM(this.editorEl, {
             autofocus: true,
             maxLength: 2500,
             singleLine: true
         });
-        editor.on("mousedown", (cm, evt) => this._onEditorMouseDown(cm, evt));
-        editor.on("change", (cm, evt) => this._onEditorChange(cm, evt));
-        editor.on("keydown", (cm, evt) => this._onEditorKeyDown(cm, evt));
+        editor.on("mousedown", (cm, evt) => this.onEditorMouseDown(cm, evt));
+        editor.on("change", (cm, evt) => this.onEditorChange(cm, evt));
+        editor.on("keydown", (cm, evt) => this.onEditorKeyDown(cm, evt));
         // hacky method to disable overwrite mode on expressions to avoid overwriting flags:
         editor.toggleOverwrite = () => { };
-        this._setInitialExpression();
+        this.setInitialExpression();
         editor.setSize(500, 50);
         this.value = Expression.DEFAULT_EXPRESSION;
     }
 
-    _onEditorMouseDown(cm, evt) {
-        // offset by half a character to make accidental clicks less likely:
-        //let index = CMUtils.getCharIndexAt(cm, evt.clientX - cm.defaultCharWidth() * 0.6, evt.clientY);
-        ///if (index >= cm.getValue().lastIndexOf(this.delim)) {
-        //	this.showFlags();
-        //}
+    onEditorMouseDown(cm, evt) {
         console.log('_onEditorMouseDown->');
     }
 
-    _onEditorKeyDown(cm, evt) {
-        // Ctrl or Command + D by default, will delete the expression and the flags field, Re: https://github.com/gskinner/regexr/issues/74
-        // So we just manually reset to nothing here.
+    onEditorKeyDown(cm, evt) {
         console.log('evt.ctrlKey->' + evt.ctrlKey);
         if ((evt.ctrlKey || evt.metaKey) && evt.keyCode == 68) {
             evt.preventDefault();
@@ -64,11 +66,11 @@ export default class Expression {
         }
     }
 
-    _onEditorChange(cm, evt) {
-        // catches pasting full expressions in.
-        // TODO: will need to be updated to work with other delimeters
-        this._deferUpdate();
+    onEditorChange(cm, evt) {
+        console.log('onEditorChange(cm, evt)');
+        this.deferUpdate();
         let str = evt.text[0];
+        console.log(evt.from.ch + ',' + evt.to.ch + "," + evt.text[0] + ',' + evt.removed + ',' + evt.origin);
         // if (evt.origin == 'paste') {
         //     var text = evt.text[0]; // pasted string
         //     var new_text = '' + text + ''; // any operations here
@@ -77,48 +79,76 @@ export default class Expression {
         //     console.log('paste detected->' + new_text);
         //     return;
         // }
-        document.getElementById('expressiontotest').innerHTML  =  cm.getValue();
-        let myRe = this.getRegex(cm.getValue());
+        document.getElementById('expressiontotest').innerHTML = cm.getValue();
+        let myRe = this.getRegex(cm.getValue(),evt);
+        console.log('after regex iniit');
         if (myRe) {
-            let array;
-            let counter = 0;
-            while ((array = myRe.exec(document.getElementById('editor').value)) !== null) {
-                console.log(`Found ${array[0]}. Next starts at ${myRe.lastIndex}.`);
-                counter++;
-            }
-            console.log('result size->' + counter);
-            
-            document.getElementById('result').innerHTML  = 'Found ' + counter + ' matches.';
+            console.log('finding patterns...');
+            setTimeout(this.matchPattern(myRe,document.getElementById('editor').value), 2000);
+            //this.matchPattern(myRe,document.getElementById('editor').value);
         }
+        console.log('after regex...');
         if (str.length < 3 || !str.match(/^\/.+[^\\]\/[a-z]*$/ig) || evt.from.ch !== 1 || evt.to.ch != 1 + evt.removed[0].length) {
             // not pasting a full expression.
-
+            console.log('returning...');
             return;
         }
+        console.log('setting value...');
         this.value = str;
-
     }
 
-    _deferUpdate() {
-        console.log('_deferUpdate');
-       
+    matchPattern(myRe,text) {
+        let array;
+        let counter = 0;
+        while ((array = myRe.exec(text)) !== null) {
+            //console.log(`Found ${array[0]}. Next starts at ${myRe.lastIndex}.`);
+            counter++;
+            console.log('while loop' + counter);
+        }
+        console.log('result size->' + counter);
+
+        document.getElementById('result').innerHTML = 'Found ' + counter + ' matches.';
     }
 
-    _update() {
-        console.log('_update');
-
+    deferUpdate() {
+        console.log('deferUpdate');
     }
 
-    getRegex(str) {
+    update() {
+        console.log('update');
+    }
+    // /\b/g
+    getRegex(str,evt) {
+        if(!str.match(/^\/.+[^\\]\/[a-z]*$/ig)) {
+            return null;
+        }
+        if (str.length < 3) {
+            return null;
+        }
+        if(evt.from.ch !== 1) {
+            return null;
+        }
+        if(evt.to.ch != 1 + evt.removed[0].length) {
+            return null;
+        }
+
+        console.log('getRegex(str)->' + str.length);
         let match = str.match(/^\/(.+)\/([a-z]+)?$/), regex = null;
+        console.log('getRegex(str)...');
         try {
+            console.log('getRegex(str)...in try');
             regex = match ? new RegExp(match[1], match[2] || "") : new RegExp(str, "g");
-        } catch (e) { }
+            console.log('getRegex(str)...in last');
+        } catch (e) { 
+            console.log(e);
+        }
+        console.log('getRegex(str)...returning...');
         return regex;
     }
 
 
-    _setInitialExpression() {
+    setInitialExpression() {
+        console.log('setInitialExpression(str)');
         let editor = this.editor;
         editor.setValue("/./g");
 
@@ -143,7 +173,7 @@ export default class Expression {
             atomic: true,
             inclusiveRight: true
         });
-        this._deferUpdate();
+        this.deferUpdate();
     }
 
 

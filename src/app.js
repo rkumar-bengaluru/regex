@@ -1,5 +1,4 @@
 
 
-import RegExr from "./RegExr";
-let app = new RegExr();
-app.init();
+import Expression from "./Expression";
+let app = new Expression();
