@@ -1,8 +1,9 @@
 import $ from "./utils/DOMUtils";
 
 export default class Expression {
-    constructor(el) {
+    constructor(text) {
         this.delim = "/";
+        this.text = text;
         this.initUI();
     }
 
@@ -99,18 +100,43 @@ export default class Expression {
         this.value = str;
     }
 
+    charRect(cm, index) {
+        if (index == null) { return null; }
+        let pos = cm.posFromIndex(index), rect = cm.charCoords(pos);
+        console.log(pos);
+        rect.x = rect.left;
+        rect.y = rect.top;
+        rect.width = rect.right - rect.left;
+        rect.height = rect.bottom - rect.top;
+        return rect;
+    }
+
     matchPattern(myRe, text) {
         let array;
         let counter = 0;
         var date1, date2, seconds;
         date1 = new Date();
+        let cm = this.text.cm;
+        let currentLineIndex = 0;
+        let currentLine = 0;
         while ((array = myRe.exec(text)) !== null) {
             //console.log(`Found ${array[0]}. Next starts at ${myRe.lastIndex}.`);
             counter++;
             //console.log('while loop' + counter);
             date2 = new Date();
             seconds = Math.abs(date1 - date2) / 1000;
-            //console.log('seconds-' + seconds);
+            let pos = cm.posFromIndex(array.index);
+            currentLine = pos.line;
+            currentLineIndex = pos.ch;
+
+
+            var len = currentLineIndex + array[0].length;
+            console.log(pos);
+            console.log('marking line->' + pos.line + ', charAt->' + currentLineIndex + ',len->' + len);
+
+            // console.log(this.charRect(this.text.cm,array.index));
+            //this.text.cm.getDoc().markText(array.index,len,{ className: "styled-background" });
+            cm.markText({ line: pos.line, ch: currentLineIndex }, { line: pos.line, ch: len }, { className: "styled-background" });
             if (seconds > 2) {
                 break;
             }

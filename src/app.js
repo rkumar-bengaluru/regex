@@ -1,4 +1,8 @@
 
 
 import Expression from "./Expression";
-let app = new Expression();
+import TestText from "./TestText";
+
+let text = new TestText();
+let app = new Expression(text);
+
