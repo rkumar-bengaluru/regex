@@ -6,13 +6,13 @@ export default class Expression {
         this.initUI();
     }
 
-    decomposeRegEx(str, delim="/") {
-        let re = new RegExp("^"+delim+"(.*)"+delim+"([igmsuUxy]*)$");
+    decomposeRegEx(str, delim = "/") {
+        let re = new RegExp("^" + delim + "(.*)" + delim + "([igmsuUxy]*)$");
         let match = re.exec(str);
         if (match) {
-            return {source: match[1], flags: match[2]};
+            return { source: match[1], flags: match[2] };
         } else {
-            return {source: str, flags: "g"};
+            return { source: str, flags: "g" };
         }
     };
 
@@ -68,6 +68,8 @@ export default class Expression {
 
     onEditorChange(cm, evt) {
         console.log('onEditorChange(cm, evt)');
+        document.getElementById('result').innerHTML = 'Processing... ';
+        document.getElementById('expressiontotest').innerHTML = cm.getValue();
         this.deferUpdate();
         let str = evt.text[0];
         console.log(evt.from.ch + ',' + evt.to.ch + "," + evt.text[0] + ',' + evt.removed + ',' + evt.origin);
@@ -79,12 +81,12 @@ export default class Expression {
         //     console.log('paste detected->' + new_text);
         //     return;
         // }
-        document.getElementById('expressiontotest').innerHTML = cm.getValue();
-        let myRe = this.getRegex(cm.getValue(),evt);
+
+        let myRe = this.getRegex(cm.getValue(), evt);
         console.log('after regex iniit');
         if (myRe) {
             console.log('finding patterns...');
-            setTimeout(this.matchPattern(myRe,document.getElementById('editor').value), 2000);
+            setTimeout(this.matchPattern(myRe, document.getElementById('editor').value), 2000);
             //this.matchPattern(myRe,document.getElementById('editor').value);
         }
         console.log('after regex...');
@@ -97,17 +99,28 @@ export default class Expression {
         this.value = str;
     }
 
-    matchPattern(myRe,text) {
+    matchPattern(myRe, text) {
         let array;
         let counter = 0;
+        var date1, date2, seconds;
+        date1 = new Date();
         while ((array = myRe.exec(text)) !== null) {
             //console.log(`Found ${array[0]}. Next starts at ${myRe.lastIndex}.`);
             counter++;
-            console.log('while loop' + counter);
+            //console.log('while loop' + counter);
+            date2 = new Date();
+            seconds = Math.abs(date1 - date2) / 1000;
+            //console.log('seconds-' + seconds);
+            if (seconds > 2) {
+                break;
+            }
         }
         console.log('result size->' + counter);
-
-        document.getElementById('result').innerHTML = 'Found ' + counter + ' matches.';
+        if (seconds > 2) {
+            document.getElementById('result').innerHTML = 'Found ' + counter + ' matches @ ' + seconds + ' seconds. Backtracking Detected';
+        } else {
+            document.getElementById('result').innerHTML = 'Found ' + counter + ' matches @ ' + seconds + ' seconds.';
+        }
     }
 
     deferUpdate() {
@@ -118,19 +131,23 @@ export default class Expression {
         console.log('update');
     }
     // /\b/g
-    getRegex(str,evt) {
-        if(!str.match(/^\/.+[^\\]\/[a-z]*$/ig)) {
+    getRegex(str, evt) {
+        if (!str.match(/^\/.+[^\\]\/[a-z]*$/ig)) {
+            console.log('!str.match(/^\/.+[^\\]\/[a-z]*$/ig)');
             return null;
         }
         if (str.length < 3) {
+            console.log('str.length < 3');
             return null;
         }
-        if(evt.from.ch !== 1) {
-            return null;
-        }
-        if(evt.to.ch != 1 + evt.removed[0].length) {
-            return null;
-        }
+        // if (evt.from.ch !== 1) {
+        //     console.log('evt.from.ch !== 1');
+        //     return null;
+        // }
+        // if (evt.to.ch != 1 + evt.removed[0].length) {
+        //     console.log('evt.to.ch != 1 + evt.removed[0].length');
+        //     return null;
+        // }
 
         console.log('getRegex(str)->' + str.length);
         let match = str.match(/^\/(.+)\/([a-z]+)?$/), regex = null;
@@ -139,7 +156,7 @@ export default class Expression {
             console.log('getRegex(str)...in try');
             regex = match ? new RegExp(match[1], match[2] || "") : new RegExp(str, "g");
             console.log('getRegex(str)...in last');
-        } catch (e) { 
+        } catch (e) {
             console.log(e);
         }
         console.log('getRegex(str)...returning...');
