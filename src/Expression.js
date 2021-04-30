@@ -1,9 +1,11 @@
 import $ from "./utils/DOMUtils";
+import MatchPattern from "./utils/MatchPattern";
 
 export default class Expression {
     constructor(text) {
         this.delim = "/";
         this.text = text;
+        this.matchPattern = new MatchPattern();
         this.initUI();
     }
 
@@ -53,6 +55,8 @@ export default class Expression {
         this.setInitialExpression();
         editor.setSize(500, 50);
         this.value = Expression.DEFAULT_EXPRESSION;
+        this.text.expmon = this.editor;
+        
     }
 
     onEditorMouseDown(cm, evt) {
@@ -82,15 +86,19 @@ export default class Expression {
         //     console.log('paste detected->' + new_text);
         //     return;
         // }
-
-        let myRe = this.getRegex(cm.getValue(), evt);
-        console.log('after regex iniit');
-        if (myRe) {
-            console.log('finding patterns...');
-            setTimeout(this.matchPattern(myRe, document.getElementById('editor').value), 2000);
-            //this.matchPattern(myRe,document.getElementById('editor').value);
-        }
-        console.log('after regex...');
+       
+        this.matchPattern.expression = cm.getValue();
+        this.matchPattern.textcm = this.text.cm;
+        this.matchPattern.result = document.getElementById('result');
+        this.matchPattern.match;
+        // let myRe = this.getRegex(cm.getValue(), evt);
+        // console.log('after regex iniit');
+        // if (myRe) {
+        //     console.log('finding patterns...');
+        //     setTimeout(this.matchPattern(myRe, document.getElementById('editor').value), 2000);
+        //     //this.matchPattern(myRe,document.getElementById('editor').value);
+        // }
+        // console.log('after regex...');
         if (str.length < 3 || !str.match(/^\/.+[^\\]\/[a-z]*$/ig) || evt.from.ch !== 1 || evt.to.ch != 1 + evt.removed[0].length) {
             // not pasting a full expression.
             console.log('returning...');
