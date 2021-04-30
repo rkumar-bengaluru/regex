@@ -3,7 +3,7 @@ var webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-    entry: ['./src/app.js', './src/sass/regexr.scss'],
+    entry: ['./src/app.js', './src/sass/regex.scss'],
     output: {
         path: path.resolve(__dirname, 'build'),
         filename: 'main.bundle.js'
