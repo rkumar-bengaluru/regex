@@ -12,6 +12,9 @@ module.exports = {
         },
         style: {
             import: './src/sass/regex.scss'
+        },
+        myjson: {
+            import: './src/json.js',
         }
     },
     optimization: {
@@ -48,6 +51,10 @@ module.exports = {
         filename: '[name].[contenthash].js',
         path: path.resolve(__dirname, 'dist'),
         clean: true,
+        library: 'MyJson',
+        globalObject: 'this',
+        libraryExport: 'default',
+        libraryTarget: 'umd',
     },
     module: {
         rules: [
